@@ -1,0 +1,40 @@
+% Fourier Analysis 
+
+clear; clc; close all;
+
+audioFiles = {'Fayrouz.wav', 'Asmahan.wav', 'LailaMorad.wav', 'ShabanAbdElraheem.wav'};
+labels = {'Fayrouz', 'Asmahan', 'Laila Morad', 'Shaban Abd Elraheem'};
+
+figure;
+for i = 1:length(audioFiles)
+    % Read the audio file
+    [audioData, fs] = audioread(audioFiles{i}); % audioData: signal, fs: sampling frequency
+    
+    if size(audioData, 2) > 1
+        audioData = mean(audioData, 2); % Average the two channels(stereo to mono)
+    end
+    
+    % Normalize the signal
+    audioData = audioData / max(abs(audioData));
+    
+    % Zero-padding for higher frequency resolution
+    N =(length(audioData)); % Next power of 2
+    fftData = fft(audioData, N); % FFT with zero-padding
+    freq = (0:N-1)*(fs/N); % Frequency axis
+    
+    % Get the magnitude of FFT and limit to positive frequencies
+    fftMagnitude = abs(fftData(1:N/2));
+    freq = freq(1:N/2);
+    
+    % Plot the frequency spectrum
+    subplot(2, 2, i); 
+    plot(freq, fftMagnitude);
+    title(['Frequency Spectrum of ', labels{i}]);
+    xlabel('Frequency (Hz)');
+    ylabel('Magnitude');
+    xlim([0 5000]); 
+    grid on;
+end
+
+% Enhance visualization
+sgtitle('Fourier Analysis of Fayrouz, Asmahan, Laila Morad, Shaban Abd Elraheem');
